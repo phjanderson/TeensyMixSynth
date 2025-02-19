@@ -1,0 +1,25 @@
+image: python:3.12
+
+variables:
+  PIO_ADDITIONAL_BUILD_FLAGS: -D DISABLE_OSC_RESTART
+
+cache:
+  paths:
+    - ~/.cache/pip
+    - ~/.platformio/.cache
+
+stages:
+ - test
+
+before_script:
+  - "pip install -U platformio"
+
+job:
+  stage: test
+  script: |
+    # install dependencies
+    pio pkg install
+    # set AUDIO_BLOCK_SAMPLES to 16
+    python -c "import fileinput, re, os; filepath = os.path.expanduser('~/.platformio/packages/framework-arduinoteensy/cores/teensy4/AudioStream.h'); [print(re.sub(r'#define AUDIO_BLOCK_SAMPLES *128', '#define AUDIO_BLOCK_SAMPLES  16', line), end='') for line in fileinput.input(files=[filepath], inplace=True)]"
+    # build the application
+    pio run
