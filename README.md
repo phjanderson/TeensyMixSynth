@@ -2,7 +2,7 @@
 
 TeensyMix synth is an 8-voice polyphonic synthesizer based on the [Teensy 4.1 development board](https://www.pjrc.com/store/teensy41.html).
 It is designed to be an easy build with just an LCD display and a digital to analog converter. An Akai MIDImix is used to control the synthesizer.
-The MIDImix is a compact and afforable MIDI based mixing controller with 24 dails, 9 sliders and 19 buttons with LEDs.
+The MIDImix is a compact and affordable MIDI based mixing controller with 24 dials, 9 sliders and 19 buttons with LEDs.
 
 All sound parameters of the synthesizer can be controlled directly using these dials, sliders and buttons. No complicated menus and pages of parameters to scroll through!
 
@@ -12,8 +12,8 @@ Features:
 - 8-voices with sawtooth, square, sine, triangle, sample & hold noise and several sampled waveforms
 - 2 oscillators per voice, one with waveform shape modulation, one with frequency modulation (FM)
 - Oscillator 1 supports unison detune with a total of 7 stereo panned oscillators with adjustable detune and mix levels
-- 2 12db filters, individually controllable, one with ajustable resonance, allows various combinations of low-pass and high-pass
-- 2 evenlope generators, one for amplitude, one for modulating the filter, shape, etc
+- 2 12db filters, individually controllable, one with adjustable resonance, allows various combinations of low-pass and high-pass
+- 2 envelope generators, one for amplitude, one for modulating the filter, shape, etc
 - 1 LFO for modulating the frequency, filter, shape, etc
 - Per voice wavefolder for manipulating the waveform
 - Per voice waveshaper for distortion
@@ -44,8 +44,8 @@ To load a patch:
 All patch parameter values will be sent out to external MIDI whenever a patch is loaded. It is possible to record these parameter values using your DAW so your song contains the right parameter values regardless of what the patch is set to.
 
 To save a patch:
-- press _BANK RIGHT to enter patch save mode, the button LED will start to blink slowly
-- the first and second digits of the current patch are indicated using the button leds of the _MUTE_ and _REC ARM_ buttons
+- press _BANK RIGHT_ to enter patch save mode, the button LED will start to blink slowly
+- the first and second digits of the current patch are indicated using the button LEDs of the _MUTE_ and _REC ARM_ buttons
 - optionally press _MUTE_ of channel 1 to 8 to select the first digit of the patch location to save to, the LED will light up
 - optionally press _REC ARM_ of channel 1 to 8 to select the second digit of the patch location to save to, the LED will light up
 - press _BANK RIGHT_ again to enter patch name mode, the button LED will start to blink quickly
