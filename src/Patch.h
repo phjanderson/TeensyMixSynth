@@ -8,7 +8,7 @@
 #include "Param.h"
 
 /**
- * A Patch consists of a name and a map of parameter ID / paramters value pairs.
+ * A Patch consists of a name and a map of parameter ID / parameters value pairs.
  */
 class Patch
 {
@@ -41,7 +41,7 @@ public:
     explicit Patch() : Patch(DEFAULT_NAME) {}
 
     /**
-     * Map of parameter ID / paramters value pairs.
+     * Map of parameter ID / parameters value pairs.
      */
     std::map<uint16_t, uint8_t> paramValueMap;
 

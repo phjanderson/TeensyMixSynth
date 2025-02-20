@@ -1,12 +1,12 @@
 # TeensyMix Synth
 
 TeensyMix synth is an 8-voice polyphonic synthesizer based on the [Teensy 4.1 development board](https://www.pjrc.com/store/teensy41.html).
-It is desgined to be an easy build with just an LCD display and a digital to analog converter. An Akai MIDImix is used to control the synthesizer.
+It is designed to be an easy build with just an LCD display and a digital to analog converter. An Akai MIDImix is used to control the synthesizer.
 The MIDImix is a compact and afforable MIDI based mixing controller with 24 dails, 9 sliders and 19 buttons with LEDs.
 
 All sound parameters of the synthesizer can be controlled directly using these dials, sliders and buttons. No complicated menus and pages of parameters to scroll through!
 
-[Listen to what it sounds like!](TeensyMix-Test-1.mp3)
+[See and listen to what it looks and sounds like!](https://youtu.be/VznQEHAQOPc)
 
 Features:
 - 8-voices with sawtooth, square, sine, triangle, sample & hold noise and several sampled waveforms
@@ -71,7 +71,7 @@ To access the menu parameters:
 
 The following control changes are accepted on the external USB and 5 pin DIN MIDI:
 
-| Parameter                  |  CC |
+| Parameter                   |  CC |
 | :------------------------- | --: |
 | ENV_1_ATTACK               |  73 |
 | ENV_1_DECAY                |  75 |
@@ -116,6 +116,8 @@ The following control changes are accepted on the external USB and 5 pin DIN MID
 | ENSEMBLE_MIX               |  93 |
 | ENSEMBLE_LFO_RATE          |  94 |
 | AMP_MOD_LFO                |  92 |
+| AMP_KBD_VELOCITY           |  95 |
+| MOD_WHL_ENV_REVERSE        | 107 |
 
 _This chart is generated using [generate_external_midi_control_chart.py](src/generate_external_midi_control_chart.py). Regenerate and replace this chart whenever you change external MIDI control changes in [src/ConstantValues.h](src/ConstantValues.h)_
 

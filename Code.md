@@ -125,11 +125,11 @@ The PatchService handles loading and saving patches to [LittleFS](https://github
 
 ### currentPatch
 
-A Patch consists of a name and a map of parameter ID / paramters value pairs. The SynthController uses the currentPatch to keep track of the current state of all parameters.
+A Patch consists of a name and a map of parameter ID / parameters value pairs. The SynthController uses the currentPatch to keep track of the current state of all parameters.
 
 ### Params
 
-A Param represents a paramters of the synthesizer affecting either the sound or the behaviour. A Param describes:
+A Param represents a parameters of the synthesizer affecting either the sound or the behaviour. A Param describes:
 * parameter ID
 * (external) MIDI control change
 * controller control change

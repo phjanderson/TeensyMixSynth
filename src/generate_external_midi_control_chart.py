@@ -9,7 +9,7 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 
-head_param="Paramter"
+head_param="Parameter"
 head_cc="CC"
 max_param_length=len(head_param)
 max_cc_length=len(head_cc)
