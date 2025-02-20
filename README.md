@@ -6,7 +6,7 @@ The MIDImix is a compact and afforable MIDI based mixing controller with 24 dail
 
 All sound parameters of the synthesizer can be controlled directly using these dials, sliders and buttons. No complicated menus and pages of parameters to scroll through!
 
-[See and listen to what it looks and sounds like!](https://youtu.be/VznQEHAQOPc)
+[See and listen to what it looks and sounds like!](https://youtu.be/ybsHHy0fLmc)
 
 Features:
 - 8-voices with sawtooth, square, sine, triangle, sample & hold noise and several sampled waveforms
