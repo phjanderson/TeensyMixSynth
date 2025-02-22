@@ -1,7 +1,7 @@
 # TeensyMix Synth
 
 TeensyMix synth is an 8-voice polyphonic synthesizer based on the [Teensy 4.1 development board](https://www.pjrc.com/store/teensy41.html).
-It is designed to be an easy build with just an LCD display and a digital to analog converter. An Akai MIDImix is used to control the synthesizer.
+It is designed to be an easy build with just an LCD display and a digital to analog converter. An [Akai MIDImix](https://www.akaipro.com/midimix) is used to control the synthesizer.
 The MIDImix is a compact and affordable MIDI based mixing controller with 24 dials, 9 sliders and 19 buttons with LEDs.
 
 All sound parameters of the synthesizer can be controlled directly using these dials, sliders and buttons. No complicated menus and pages of parameters to scroll through!
