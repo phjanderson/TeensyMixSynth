@@ -5,6 +5,8 @@
 // see [SynthController.h](SynthController.h) for actual usage of fnptr
 // source: https://stackoverflow.com/a/45365798
 
+// please note: this template uses static storage for captured variables, all instances of the same lambda will share the same captured variable values!
+
 #include<type_traits>
 #include<utility>
 #include<new>

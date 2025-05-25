@@ -11,6 +11,8 @@ Minimal required hardware to get started on a breadboard:
 - Optional but recommended: LCD2004a display, preferably a 3.3 volt version
 - Optional: 5 pin DIN MIDI interface circuitry
 
+___Please note:__ This is only a synthesizer to produce sound, you still need a MIDI keyboard to play notes. You can connect a MIDI keyboard through the 5 pin DIN MIDI interface, the USB host connector using a USB hub or the external USB generally connected through a PC running digital audio workstation (DAW) software._
+
 ## Connecting the hardware
 
 ### Micro SD card

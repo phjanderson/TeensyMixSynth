@@ -44,8 +44,8 @@ private:
     bool controlStateLightSaveWasOn{false};
     LightState controlStateLightSaveState{LightState::off};
 
-    // controller MIDI devices, MIDImix and additional devices such as a keyboard (when using a USB hub)
-    std::vector<MIDIDeviceBase *> * controllerMidiDevices;
+    // USB host MIDI devices, MIDImix and additional devices such as a keyboard (when using a USB hub)
+    std::vector<MIDIDeviceBase *> * usbHostMidiDevices;
     // external USB MIDI (DAW)
     usb_midi_class * extMidiUsb;
     // external hardware serial MIDI (DAW)
@@ -127,9 +127,12 @@ private:
         Serial.println();
         #endif
 
-        for (auto &controllerMidiDevice : *controllerMidiDevices)
+        for (auto &usbHostMidiDevice : *usbHostMidiDevices)
         {
-            controllerMidiDevice->sendNoteOn(note, velocity, channel, cable);
+            if (isAkaiMidiMix(usbHostMidiDevice))
+            {
+                usbHostMidiDevice->sendNoteOn(note, velocity, channel, cable);
+            }
         }
     }
 
@@ -1125,13 +1128,13 @@ public:
      * Initialize the synth controller.
      * 
      * @param params reference to the param list
-     * @param controllerMidiDevices controller MIDI devices
+     * @param usbHostMidiDevices USB host MIDI devices
      * @param extMidiUsb external USB MIDI 
      * @param extMidiHardwareSerial external hardware serial MIDI
      */
-    void initialize(const std::vector<Param> &params, std::vector<MIDIDeviceBase *> * controllerMidiDevices, usb_midi_class * extMidiUsb, midi::MidiInterface<midi::SerialMIDI<HardwareSerial>> * extMidiHardwareSerial)
+    void initialize(const std::vector<Param> &params, std::vector<MIDIDeviceBase *> * usbHostMidiDevices, usb_midi_class * extMidiUsb, midi::MidiInterface<midi::SerialMIDI<HardwareSerial>> * extMidiHardwareSerial)
     {
-        this->controllerMidiDevices = controllerMidiDevices;
+        this->usbHostMidiDevices = usbHostMidiDevices;
         this->extMidiUsb = extMidiUsb;
         this->extMidiHardwareSerial = extMidiHardwareSerial;
 
@@ -1183,50 +1186,105 @@ public:
         // enter play state
         enterStatePlay();
 
-        // register MIDI handlers for controller MIDI devices
+        // register MIDI handlers for USB host MIDI devices
         // use fnptr to wrap reference to method calls on this SynthController instance to "normal" function pointers
-        for (auto &controllerMidiDevice : *controllerMidiDevices)
+        for (auto &usbHostMidiDevice : *usbHostMidiDevices)
         {
-            controllerMidiDevice->setHandleNoteOn(
-                fnptr<void(uint8_t channel, uint8_t note, uint8_t velocity)>(
-                    [this](uint8_t channel, uint8_t note, uint8_t velocity)
-                    {
-                        this->onNoteOn(channel, note, velocity, true);
-                    }
-                )
-            );
-            controllerMidiDevice->setHandleNoteOff(
-                fnptr<void(uint8_t channel, uint8_t note, uint8_t velocity)>(
-                    [this](uint8_t channel, uint8_t note, [[maybe_unused]] uint8_t velocity)
-                    {
-                        this->onNoteOff(channel, note, true);
-                    }
-                )
-            );
-            controllerMidiDevice->setHandleControlChange(
-                fnptr<void(uint8_t channel, uint8_t control, uint8_t value)>(
-                    [this](uint8_t channel, uint8_t control, uint8_t value)
-                    {
-                        this->onControlChange(channel, control, value, true);
-                    }
-                )
-            );
-            controllerMidiDevice->setHandlePitchChange(
-                fnptr<void(uint8_t channel, int pitch)>(
-                    [this](uint8_t channel, int pitch)
-                    {
-                        this->onPitchChange(channel, pitch, true);
-                    }
-                )
-            );
-            controllerMidiDevice->setHandleProgramChange(
-                fnptr<void(uint8_t channel, uint8_t program)>(
-                    [this](uint8_t channel, uint8_t program)
-                    {
-                        this->onProgramChange(channel, program, true);
-                    }
-                )
-            );
+            Serial.print("idVendor: ");
+            Serial.println(usbHostMidiDevice->idVendor());
+            Serial.print("idProduct: ");
+            Serial.println(usbHostMidiDevice->idProduct());
+
+            if (isAkaiMidiMix(usbHostMidiDevice))
+            {
+                Serial.println("Found AKAI MIDI Mix connected to USB host");
+
+                usbHostMidiDevice->setHandleNoteOn(
+                    fnptr<void(uint8_t channel, uint8_t note, uint8_t velocity)>(
+                        [this](uint8_t channel, uint8_t note, uint8_t velocity)
+                        {
+                            this->onNoteOn(channel, note, velocity, true);
+                        }
+                    )
+                );
+                usbHostMidiDevice->setHandleNoteOff(
+                    fnptr<void(uint8_t channel, uint8_t note, uint8_t velocity)>(
+                        [this](uint8_t channel, uint8_t note, [[maybe_unused]] uint8_t velocity)
+                        {
+                            this->onNoteOff(channel, note, true);
+                        }
+                    )
+                );
+                usbHostMidiDevice->setHandleControlChange(
+                    fnptr<void(uint8_t channel, uint8_t control, uint8_t value)>(
+                        [this](uint8_t channel, uint8_t control, uint8_t value)
+                        {
+                            this->onControlChange(channel, control, value, true);
+                        }
+                    )
+                );
+                usbHostMidiDevice->setHandlePitchChange(
+                    fnptr<void(uint8_t channel, int pitch)>(
+                        [this](uint8_t channel, int pitch)
+                        {
+                            this->onPitchChange(channel, pitch, true);
+                        }
+                    )
+                );
+                usbHostMidiDevice->setHandleProgramChange(
+                    fnptr<void(uint8_t channel, uint8_t program)>(
+                        [this](uint8_t channel, uint8_t program)
+                        {
+                            this->onProgramChange(channel, program, true);
+                        }
+                    )
+                );
+            }
+            else
+            {
+                Serial.println("Found other MIDI device connected to USB host");
+
+                usbHostMidiDevice->setHandleNoteOn(
+                    fnptr<void(uint8_t channel, uint8_t note, uint8_t velocity)>(
+                        [this](uint8_t channel, uint8_t note, uint8_t velocity)
+                        {
+                            this->onNoteOn(channel, note, velocity, false);
+                        }
+                    )
+                );
+                usbHostMidiDevice->setHandleNoteOff(
+                    fnptr<void(uint8_t channel, uint8_t note, uint8_t velocity)>(
+                        [this](uint8_t channel, uint8_t note, [[maybe_unused]] uint8_t velocity)
+                        {
+                            this->onNoteOff(channel, note, false);
+                        }
+                    )
+                );
+                usbHostMidiDevice->setHandleControlChange(
+                    fnptr<void(uint8_t channel, uint8_t control, uint8_t value)>(
+                        [this](uint8_t channel, uint8_t control, uint8_t value)
+                        {
+                            this->onControlChange(channel, control, value, false);
+                        }
+                    )
+                );
+                usbHostMidiDevice->setHandlePitchChange(
+                    fnptr<void(uint8_t channel, int pitch)>(
+                        [this](uint8_t channel, int pitch)
+                        {
+                            this->onPitchChange(channel, pitch, false);
+                        }
+                    )
+                );
+                usbHostMidiDevice->setHandleProgramChange(
+                    fnptr<void(uint8_t channel, uint8_t program)>(
+                        [this](uint8_t channel, uint8_t program)
+                        {
+                            this->onProgramChange(channel, program, false);
+                        }
+                    )
+                );
+            }
         }
 
         // register MIDI handlers for external USB MIDI

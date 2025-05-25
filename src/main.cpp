@@ -40,7 +40,7 @@ static USBHub hub3(usbHost);
 static MIDIDevice_BigBuffer usbHostMidi1(usbHost);
 static MIDIDevice_BigBuffer usbHostMidi2(usbHost);
 
-static std::vector<MIDIDeviceBase *> controllerMidiDevices{{&usbHostMidi1, &usbHostMidi2}};
+static std::vector<MIDIDeviceBase *> usbHostMidiDevices{{&usbHostMidi1, &usbHostMidi2}};
 
 static SynthController synthController;
 
@@ -56,15 +56,15 @@ void setup()
     // add a slight delay to wait for the USB host and MIDImix to come online, otherwise the first commands sent to the MIDImix will be lost
     delay(600);
 
-    // wait for Arduino Serial Monitor with a 3 seconds timeout
+    // wait for Arduino Serial Monitor with a 30 seconds timeout
     // elapsedMillis serialWaitTimer;
-    // while (!Serial && serialWaitTimer < 3000);
+    // while (!Serial && serialWaitTimer < 30000);
 
     Serial.println("Synth test setup!");
 
     AudioMemory(128);
 
-    synthController.initialize(PARAMS, &controllerMidiDevices, &usbMIDI, &hardwareSerialMIDI);
+    synthController.initialize(PARAMS, &usbHostMidiDevices, &usbMIDI, &hardwareSerialMIDI);
 }
 
 /**
@@ -106,20 +106,20 @@ void loop()
     #endif
 
     #ifdef DEBUG_CPU_USAGE
-    elapsedMillis controllerMidiDevicesRead;
+    elapsedMillis usbHostMidiDevicesRead;
     #endif
 
-    // read and handle incoming controller MIDI
-    for (auto &controllerMidiDevice : controllerMidiDevices)
+    // read and handle incoming USB host MIDI
+    for (auto &usbHostMidiDevice : usbHostMidiDevices)
     {
-        controllerMidiDevice->read();
+        usbHostMidiDevice->read();
     }
 
     #ifdef DEBUG_CPU_USAGE
-    if (controllerMidiDevicesRead > 1) {
+    if (usbHostMidiDevicesRead > 1) {
         Serial.println();
-        Serial.print("controllerMidiDevices->read(): ");
-        Serial.print(controllerMidiDevicesRead);
+        Serial.print("usbHostMidiDevices->read(): ");
+        Serial.print(usbHostMidiDevicesRead);
         Serial.println("ms");
     }
     #endif

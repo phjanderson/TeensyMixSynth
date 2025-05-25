@@ -88,8 +88,8 @@ And replace it with:
 The flow of data and control within the code is roughly as follows:
 ```mermaid
 flowchart LR
-    MIDImix <--> controllerMidiDevices
-    controllerMidiDevices <--> SynthController
+    MIDImix <--> usbHostMidiDevices
+    usbHostMidiDevices <--> SynthController
     DAW <--> extMidiUsb
     extMidiUsb <--> SynthController
     SynthController --> DisplayService
@@ -107,7 +107,7 @@ flowchart LR
 
 Notes and parameter changes enter the flow through two separate MIDI paths: controller and external.
 
-The MIDImix is connected to the USB Host interface. MIDI messages entering from this path are handled as _controller_ messages. The MIDImix sends out control changes for dials/sliders and notes for buttons. Button lights can be turned on/off by sending back notes. The default note and control change layout of the MIDImix is used. For more information, see: [(Unofficial) Akai Professional MIDImix Communications Protocol Guide](https://docs.google.com/document/d/1zeRPklp_Mo_XzJZUKu2i-p1VgfBoUWF0JKZ5CzX8aB0/edit?usp=sharing) by Julian Ceipek. It is possible to connect a additional MIDI keyboard to the USB host interface using a USB hub (I used a Nektar SE25 during development), but low notes will be interpreted as button presses on the MIDImix.
+The MIDImix is connected to the USB Host interface. MIDI messages entering from this path are handled as _controller_ messages if the USB idVendor and idProduct match that of the AKAI MIDImix. The MIDImix sends out control changes for dials/sliders and notes for buttons. Button lights can be turned on/off by sending back notes. The default note and control change layout of the MIDImix is used. For more information, see: [(Unofficial) Akai Professional MIDImix Communications Protocol Guide](https://docs.google.com/document/d/1zeRPklp_Mo_XzJZUKu2i-p1VgfBoUWF0JKZ5CzX8aB0/edit?usp=sharing) by Julian Ceipek. It is possible to connect a additional MIDI keyboard to the USB host interface using a USB hub (I used a Nektar SE25 during development).
 
 The TeensyMix Synth is connected to a PC running a Digital Audio Workstation (DAW) using the regular USB interface. MIDI messages entering from this path are considered as _external_ messages. The control change layout follow the `PARAM_MC_` constants in [src/ConstantValues.h](src/ConstantValues.h)
 

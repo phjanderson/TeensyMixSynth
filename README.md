@@ -28,6 +28,8 @@ For more information about the source code, see: [Code.md](Code.md)
 
 ___Please note:__ this project overclocks the Teensy 4.1 slightly, see [platformio.ini](platformio.ini) for more information._
 
+___Please note:__ This is only a synthesizer to produce sound, you still need a MIDI keyboard to play notes. You can connect a MIDI keyboard through the 5 pin DIN MIDI interface, the USB host connector using a USB hub or the external USB generally connected through a PC running digital audio workstation (DAW) software._
+
 ## Usage
 
 ### MIDImix controls

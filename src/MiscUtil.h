@@ -84,4 +84,14 @@ uint8_t convertPatchNumberToDigits(const uint8_t patchNumber)
     return octal + 11;
 }
 
+/**
+ * Check if the USB host MIDI device specified is an Akai MIDImix (idVendor 0x09e8, idProduct 0x0031),
+ * 
+ * @param usbHostMidiDevice USB host MIDI device
+ * @return bool true if Akai MIDImix
+ */
+bool isAkaiMidiMix(MIDIDeviceBase* usbHostMidiDevice) {
+    return usbHostMidiDevice->idVendor() == 0x09e8 && usbHostMidiDevice->idProduct() == 0x0031;
+}
+
 #endif
