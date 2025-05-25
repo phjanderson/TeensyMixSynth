@@ -20,16 +20,34 @@ static const uint16_t NUM_VOICES{8};
 class Synth
 {
 private:
-    // main I2C audio output
-    AudioOutputI2S i2s1;
+    // lfo shape level
+    AudioSynthWaveformDc lfoShape;
+
+    // central lfo
+    AudioSynthWaveformModulated lfo;
+
+	// connect lfo shape to lfo
+    AudioConnection patchCordLfoShape0ToLfo = AudioConnection(lfoShape, 0, lfo, 1);
+    
+    // synth voices
+    std::array<SynthVoice, NUM_VOICES> synthVoices;
+
+    // add a 1 bit DC offset to prevent a plop/tick sound whenever all voices become silent, probably due to the DAC switching to power-saving mode
+    AudioSynthWaveformDc antiPlopOffset;
+
+    // voice sub mixers
+    std::array<AudioMixer4, 4> voiceSubMixersL;
+    std::array<AudioMixer4, 4> voiceSubMixersR;
+
+    // connect the anti plop offset to the last input of the last voice sub mixer
+    AudioConnection patchCordAntiPlopOffset0ToVoiceSubMixersL33 = AudioConnection(antiPlopOffset, 0, voiceSubMixersL[3], 3);
+    AudioConnection patchCordAntiPlopOffset0ToVoiceSubMixersR33 = AudioConnection(antiPlopOffset, 0, voiceSubMixersL[3], 3);
 
     // voice mixers
     AudioMixer4 voiceMixerL;
     AudioMixer4 voiceMixerR;
 
-    // voice sub mixers
-    std::array<AudioMixer4, 4> voiceSubMixersL;
-    std::array<AudioMixer4, 4> voiceSubMixersR;
+	// connect voice sub mixers to voice mixers
     AudioConnection patchCordVoiceSubMixersL0ToVoiceMixerL0 = AudioConnection(voiceSubMixersL[0], 0, voiceMixerL, 0);
     AudioConnection patchCordVoiceSubMixersL1ToVoiceMixerL1 = AudioConnection(voiceSubMixersL[1], 0, voiceMixerL, 1);
     AudioConnection patchCordVoiceSubMixersL2ToVoiceMixerL2 = AudioConnection(voiceSubMixersL[2], 0, voiceMixerL, 2);
@@ -39,15 +57,13 @@ private:
     AudioConnection patchCordVoiceSubMixersR2ToVoiceMixerR2 = AudioConnection(voiceSubMixersR[2], 0, voiceMixerR, 2);
     AudioConnection patchCordVoiceSubMixersR3ToVoiceMixerR3 = AudioConnection(voiceSubMixersR[3], 0, voiceMixerR, 3);
 
-    // add a 1 bit DC offset to prevent a plop/tick sound whenever all voices become silent, probably due to the DAC switching to power-saving mode
-    AudioSynthWaveformDc antiPlopOffset;
-    AudioConnection patchCordAntiPlopOffset0ToVoiceSubMixersL33 = AudioConnection(antiPlopOffset, 0, voiceSubMixersL[3], 3);
-    AudioConnection patchCordAntiPlopOffset0ToVoiceSubMixersR33 = AudioConnection(antiPlopOffset, 0, voiceSubMixersL[3], 3);
-
     // mono voice mixer used to send audio to the ensemble chorus
     AudioMixer4 voiceMixer;
     AudioConnection patchCordVoiceMixerL0ToVoiceMixer0 = AudioConnection(voiceMixerL, 0, voiceMixer, 0);
     AudioConnection patchCordVoiceMixerR0ToVoiceMixer1 = AudioConnection(voiceMixerR, 0, voiceMixer, 1);
+
+    // ensemble chorus
+    AudioEffectEnsemble ensemble;
 
     // effect mixer, mixes the clean and ensemble chorus sound
     AudioMixer4 effectMixerL;
@@ -57,9 +73,6 @@ private:
     AudioConnection patchCordVoiceMixerToEffectMixerL0 = AudioConnection(voiceMixerL, 0, effectMixerL, 0);
     AudioConnection patchCordVoiceMixerToEffectMixerR0 = AudioConnection(voiceMixerR, 0, effectMixerR, 0);
 
-    // ensemble chorus
-    AudioEffectEnsemble ensemble;
-
     // connect the mono voice mixer to the ensemble chorus
     AudioConnection patchCordVoiceMixerToEnsemble = AudioConnection(voiceMixer, 0, ensemble, 0);
 
@@ -67,19 +80,12 @@ private:
     AudioConnection patchCordEnsemble0ToEffectMixerL1 = AudioConnection(ensemble, 0, effectMixerL, 1);
     AudioConnection patchCordEnsemble1ToEffectMixerR1 = AudioConnection(ensemble, 1, effectMixerR, 1);
 
+    // main I2C audio output
+    AudioOutputI2S i2s1;
+
     // connect the effect mixers to the audio output
     AudioConnection patchCordEffectMixerLToI2S1L = AudioConnection(effectMixerL, 0, i2s1, 0);
     AudioConnection patchCordEffectMixerRToI2S1R = AudioConnection(effectMixerR, 0, i2s1, 1);
-
-    // central lfo
-    AudioSynthWaveformModulated lfo;
-
-    // lfo shape level
-    AudioSynthWaveformDc lfoShape;
-    AudioConnection patchCordLfoShape0ToLfo = AudioConnection(lfoShape, 0, lfo, 1);
-
-    // synth voices
-    std::array<SynthVoice, NUM_VOICES> synthVoices;
 
     // waveshaper
     float currentWaveshapeLevel{0.0f};
